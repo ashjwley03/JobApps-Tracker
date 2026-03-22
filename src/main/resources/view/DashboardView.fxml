@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="gui.DashboardController"
+      spacing="10" style="-fx-padding: 15;">
+
+    <!-- Heading row -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Application Dashboard" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+        <Button text="+ New" onAction="#handleNewApplication"/>
+    </HBox>
+
+    <!-- Search bar -->
+    <TextField fx:id="searchField"
+               promptText="Search by company or role..."
+               onKeyReleased="#handleSearch"/>
+
+    <!-- Applications table -->
+    <TableView fx:id="applicationTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colCompany"  text="Company"      prefWidth="160"/>
+            <TableColumn fx:id="colRole"     text="Role"         prefWidth="180"/>
+            <TableColumn fx:id="colStatus"   text="Status"       prefWidth="140"/>
+            <TableColumn fx:id="colDeadline" text="Deadline"     prefWidth="120"/>
+        </columns>
+        <placeholder>
+            <Label text="No applications yet. Click '+ New' to add one."/>
+        </placeholder>
+    </TableView>
+
+</VBox>

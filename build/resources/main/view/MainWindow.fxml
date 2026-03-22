@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="gui.MainController">
+
+    <!-- Sidebar -->
+    <left>
+        <VBox spacing="5" style="-fx-padding: 10; -fx-min-width: 150;">
+            <Label text="Menu" style="-fx-font-weight: bold;"/>
+            <Separator/>
+            <Button fx:id="btnDashboard" text="Dashboard"
+                    maxWidth="Infinity" onAction="#showDashboard"/>
+            <Button fx:id="btnCalendar"  text="Calendar"
+                    maxWidth="Infinity" onAction="#showCalendar"/>
+            <Button fx:id="btnCompare"   text="Compare"
+                    maxWidth="Infinity" onAction="#showCompare"/>
+        </VBox>
+    </left>
+    <center>
+        <StackPane fx:id="contentArea"/>
+    </center>
+
+</BorderPane>

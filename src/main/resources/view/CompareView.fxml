@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      style="-fx-padding: 15;" spacing="10">
+
+    <Label text="Compare" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+    <Label text="Coming soon — side-by-side internship comparison will go here."/>
+
+</VBox>

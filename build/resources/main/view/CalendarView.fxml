@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml"
+      style="-fx-padding: 15;" spacing="10">
+
+    <Label text="Calendar" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+    <Label text="Coming soon — interview and deadline calendar will go here."/>
+
+</VBox>
