@@ -1,13 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<VBox xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml"
-      style="-fx-padding: 15;" spacing="10">
+<VBox spacing="0" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="gui.CalendarController"
+      style="-fx-background-color: white;">
+    <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
 
-    <Label text="Calendar" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
-    <Label text="Coming soon."/>
+    <!-- Month navigation header -->
+    <HBox alignment="CENTER" spacing="16" style="-fx-padding: 0 0 12 0;">
+        <Button text="‹" onAction="#handlePrevMonth"
+                style="-fx-font-size: 20px; -fx-background-color: transparent; -fx-cursor: hand;"/>
+        <Label fx:id="monthYearLabel"
+               style="-fx-font-size: 20px; -fx-font-weight: bold;"
+               minWidth="220" alignment="CENTER"/>
+        <Button text="›" onAction="#handleNextMonth"
+                style="-fx-font-size: 20px; -fx-background-color: transparent; -fx-cursor: hand;"/>
+    </HBox>
 
+    <!-- Day-of-week headers -->
+    <GridPane style="-fx-background-color: #f3f4f6; -fx-border-color: #e5e7eb; -fx-border-width: 0.5;">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+        </columnConstraints>
+        <Label text="Sun" alignment="CENTER" maxWidth="Infinity" style="-fx-font-weight: bold; -fx-padding: 6; -fx-font-size: 12px;" GridPane.columnIndex="0"/>
+        <Label text="Mon" alignment="CENTER" maxWidth="Infinity" style="-fx-font-weight: bold; -fx-padding: 6; -fx-font-size: 12px;" GridPane.columnIndex="1"/>
+        <Label text="Tue" alignment="CENTER" maxWidth="Infinity" style="-fx-font-weight: bold; -fx-padding: 6; -fx-font-size: 12px;" GridPane.columnIndex="2"/>
+        <Label text="Wed" alignment="CENTER" maxWidth="Infinity" style="-fx-font-weight: bold; -fx-padding: 6; -fx-font-size: 12px;" GridPane.columnIndex="3"/>
+        <Label text="Thu" alignment="CENTER" maxWidth="Infinity" style="-fx-font-weight: bold; -fx-padding: 6; -fx-font-size: 12px;" GridPane.columnIndex="4"/>
+        <Label text="Fri" alignment="CENTER" maxWidth="Infinity" style="-fx-font-weight: bold; -fx-padding: 6; -fx-font-size: 12px;" GridPane.columnIndex="5"/>
+        <Label text="Sat" alignment="CENTER" maxWidth="Infinity" style="-fx-font-weight: bold; -fx-padding: 6; -fx-font-size: 12px;" GridPane.columnIndex="6"/>
+    </GridPane>
+
+    <!-- Calendar day grid — populated programmatically by CalendarController -->
+    <GridPane fx:id="calendarGrid" VBox.vgrow="ALWAYS">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+        </columnConstraints>
+    </GridPane>
+
+    <!-- Legend -->
+    <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 10 0 0 4;">
+        <Label text="● Deadline"  style="-fx-text-fill: #ef4444; -fx-font-size: 12px;"/>
+        <Label text="● Interview" style="-fx-text-fill: #2563eb; -fx-font-size: 12px;"/>
+        <Label text="● Reminder"  style="-fx-text-fill: #f59e0b; -fx-font-size: 12px;"/>
+    </HBox>
 </VBox>
