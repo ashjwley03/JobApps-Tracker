@@ -1,13 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      style="-fx-padding: 15;" spacing="10">
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="gui.CompareController"
+      style="-fx-background-color: white;"
+      spacing="0">
 
-    <Label text="Compare" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
-    <Label text="Coming soon."/>
+    <!-- Left panel: checkbox list of all applications -->
+    <VBox minWidth="240" maxWidth="280" style="-fx-border-color: #e5e7eb; -fx-border-width: 0 1 0 0;">
+        <padding><Insets top="16" right="12" bottom="16" left="12"/></padding>
 
-</VBox>
+        <Label text="Applications"
+               style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-padding: 0 0 8 0;"/>
+
+        <ListView fx:id="appListView" VBox.vgrow="ALWAYS"/>
+    </VBox>
+
+    <!-- Right panel: comparison table -->
+    <VBox HBox.hgrow="ALWAYS" spacing="8">
+        <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+
+        <Label text="Comparison"
+               style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+
+        <Label fx:id="hintLabel"
+               style="-fx-text-fill: #6b7280; -fx-font-size: 12px;"/>
+
+        <TableView fx:id="compareTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colCompany"  text="Company"  prefWidth="150"/>
+                <TableColumn fx:id="colRole"     text="Role"     prefWidth="150"/>
+                <TableColumn fx:id="colPay"      text="Pay"      prefWidth="80"/>
+                <TableColumn fx:id="colLocation" text="Location" prefWidth="120"/>
+                <TableColumn fx:id="colStatus"   text="Status"   prefWidth="110"/>
+                <TableColumn fx:id="colDeadline" text="Deadline" prefWidth="100"/>
+            </columns>
+        </TableView>
+    </VBox>
+</HBox>
