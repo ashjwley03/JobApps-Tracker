@@ -1,3 +1,6 @@
+# Data files (storage layer)
+data/
+
 # Compiled class file
 *.class
 
