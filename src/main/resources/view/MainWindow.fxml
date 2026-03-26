@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="gui.MainController"
+            style="-fx-background-color: #141414;">
+
+    <left>
+        <VBox styleClass="sidebar">
+            <Label text="AppTracker" styleClass="sidebar-logo"/>
+            <Separator/>
+            <Label text="NAVIGATION" styleClass="sidebar-title"/>
+            <Button fx:id="btnDashboard" text="Dashboard"
+                    maxWidth="Infinity" onAction="#showDashboard"/>
+            <Button fx:id="btnCalendar"  text="Calendar"
+                    maxWidth="Infinity" onAction="#showCalendar"/>
+            <Button fx:id="btnCompare"   text="Compare"
+                    maxWidth="Infinity" onAction="#showCompare"/>
+        </VBox>
+    </left>
+    <center>
+        <StackPane fx:id="contentArea" style="-fx-background-color: #141414;"/>
+    </center>
+
+</BorderPane>

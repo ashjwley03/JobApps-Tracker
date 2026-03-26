@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="gui.DashboardController"
+      spacing="0"
+      style="-fx-background-color: #141414; -fx-padding: 20;">
+
+    <Label text="Pages / Dashboard" styleClass="breadcrumb"/>
+    <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 0 0 16 0;">
+        <Label text="Application Tracker" styleClass="page-title" HBox.hgrow="ALWAYS"/>
+        <Button text="New Application" styleClass="primary-button" onAction="#handleNewApplication"/>
+    </HBox>
+    <HBox spacing="12" style="-fx-padding: 0 0 16 0;">
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+            <Label text="TOTAL APPS" styleClass="stat-label"/>
+            <Label fx:id="statTotal" text="—" styleClass="stat-value"/>
+        </VBox>
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+            <Label text="APPLIED" styleClass="stat-label"/>
+            <Label fx:id="statApplied" text="—" styleClass="stat-value"/>
+        </VBox>
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+            <Label text="INTERVIEWING" styleClass="stat-label"/>
+            <Label fx:id="statInterviewing" text="—" styleClass="stat-value"/>
+        </VBox>
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+            <Label text="OFFERS" styleClass="stat-label"/>
+            <Label fx:id="statOffers" text="—" styleClass="stat-value-accent"/>
+        </VBox>
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+            <Label text="REJECTED" styleClass="stat-label"/>
+            <Label fx:id="statRejected" text="—" styleClass="stat-value"/>
+        </VBox>
+    </HBox>
+
+    <!-- ── Charts row ── -->
+    <HBox spacing="12" style="-fx-padding: 0 0 16 0;" minHeight="240">
+
+        <!-- Bar chart: applications by status -->
+        <VBox styleClass="card" HBox.hgrow="ALWAYS">
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label text="Applications by Status" styleClass="section-title" HBox.hgrow="ALWAYS"/>
+            </HBox>
+            <BarChart fx:id="statusBarChart"
+                      VBox.vgrow="ALWAYS"
+                      animated="false"
+                      legendVisible="false"
+                      style="-fx-padding: 0;">
+                <xAxis>
+                    <CategoryAxis fx:id="barXAxis" tickLabelRotation="0"/>
+                </xAxis>
+                <yAxis>
+                    <NumberAxis fx:id="barYAxis" minorTickVisible="false" tickUnit="1"/>
+                </yAxis>
+            </BarChart>
+        </VBox>
+
+        <!-- Pie chart: status breakdown -->
+        <VBox styleClass="card" minWidth="260" maxWidth="300">
+            <Label text="Status Breakdown" styleClass="section-title"/>
+            <PieChart fx:id="statusPieChart"
+                      VBox.vgrow="ALWAYS"
+                      animated="false"
+                      labelsVisible="false"
+                      legendVisible="true"
+                      legendSide="BOTTOM"/>
+        </VBox>
+
+    </HBox>
+    <TextField fx:id="searchField"
+               promptText="Search by company or role…"
+               styleClass="search-field"
+               onKeyReleased="#handleSearch"
+               style="-fx-max-width: 340;">
+        <VBox.margin>
+            <Insets bottom="12"/>
+        </VBox.margin>
+    </TextField>
+
+    <TableView fx:id="applicationTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+        <columns>
+            <TableColumn fx:id="colCompany"  text="Company"  prefWidth="180"/>
+            <TableColumn fx:id="colRole"     text="Role"     prefWidth="200"/>
+            <TableColumn fx:id="colStatus"   text="Status"   prefWidth="130"/>
+            <TableColumn fx:id="colDeadline" text="Deadline" prefWidth="120"/>
+        </columns>
+        <placeholder>
+            <Label text="No applications yet. Click '+ New Application' to get started."
+                   style="-fx-text-fill: #4b5563;"/>
+        </placeholder>
+    </TableView>
+
+</VBox>

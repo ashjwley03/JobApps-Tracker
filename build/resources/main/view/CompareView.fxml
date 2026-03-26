@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="gui.CompareController"
+      styleClass="compare-page"
+      spacing="0">
+
+    <VBox styleClass="compare-sidebar">
+        <Label text="Applications" styleClass="section-title"/>
+        <Label text="Check apps to compare" styleClass="hint-label"/>
+        <ListView fx:id="appListView" VBox.vgrow="ALWAYS"/>
+    </VBox>
+
+    <VBox HBox.hgrow="ALWAYS" styleClass="compare-main">
+        <Label text="Comparison" styleClass="section-title"/>
+        <Label fx:id="hintLabel" styleClass="hint-label"/>
+        <TableView fx:id="compareTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+            <columns>
+                <TableColumn fx:id="colCompany"  text="Company"  prefWidth="150"/>
+                <TableColumn fx:id="colRole"     text="Role"     prefWidth="150"/>
+                <TableColumn fx:id="colPay"      text="Pay"      prefWidth="90"/>
+                <TableColumn fx:id="colLocation" text="Location" prefWidth="120"/>
+                <TableColumn fx:id="colStatus"   text="Status"   prefWidth="110"/>
+                <TableColumn fx:id="colDeadline" text="Deadline" prefWidth="100"/>
+            </columns>
+        </TableView>
+    </VBox>
+</HBox>

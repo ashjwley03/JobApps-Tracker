@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="0" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="gui.CalendarController"
+      styleClass="calendar-page">
+    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+    <Label text="Pages / Calendar" styleClass="breadcrumb"/>
+    <Label text="Calendar" styleClass="page-title"/>
+    <HBox alignment="CENTER_LEFT" spacing="12" styleClass="calendar-nav-header">
+        <Button text="‹" onAction="#handlePrevMonth" styleClass="nav-arrow"/>
+        <Label fx:id="monthYearLabel" styleClass="calendar-month-label"/>
+        <Button text="›" onAction="#handleNextMonth" styleClass="nav-arrow"/>
+    </HBox>
+
+    <GridPane styleClass="calendar-dow-header">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+        </columnConstraints>
+        <Label text="Sun" alignment="CENTER" maxWidth="Infinity" styleClass="calendar-dow-label" GridPane.columnIndex="0"/>
+        <Label text="Mon" alignment="CENTER" maxWidth="Infinity" styleClass="calendar-dow-label" GridPane.columnIndex="1"/>
+        <Label text="Tue" alignment="CENTER" maxWidth="Infinity" styleClass="calendar-dow-label" GridPane.columnIndex="2"/>
+        <Label text="Wed" alignment="CENTER" maxWidth="Infinity" styleClass="calendar-dow-label" GridPane.columnIndex="3"/>
+        <Label text="Thu" alignment="CENTER" maxWidth="Infinity" styleClass="calendar-dow-label" GridPane.columnIndex="4"/>
+        <Label text="Fri" alignment="CENTER" maxWidth="Infinity" styleClass="calendar-dow-label" GridPane.columnIndex="5"/>
+        <Label text="Sat" alignment="CENTER" maxWidth="Infinity" styleClass="calendar-dow-label" GridPane.columnIndex="6"/>
+    </GridPane>
+
+    <GridPane fx:id="calendarGrid" VBox.vgrow="ALWAYS">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="14.28" hgrow="ALWAYS"/>
+        </columnConstraints>
+    </GridPane>
+
+    <HBox styleClass="calendar-legend" alignment="CENTER_LEFT">
+        <Label text="● Deadline"  styleClass="legend-deadline"/>
+        <Label text="● Interview" styleClass="legend-interview"/>
+        <Label text="● Reminder"  styleClass="legend-reminder"/>
+    </HBox>
+</VBox>
