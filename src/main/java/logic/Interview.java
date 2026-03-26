@@ -10,6 +10,7 @@ public class Interview {
     private LocalDateTime date;
     private String notes;
 
+    // Standard constructor — used when creating a new interview
     public Interview(String applicationId, int round, LocalDateTime date) {
         this.id = UUID.randomUUID().toString();
         this.applicationId = applicationId;
@@ -18,13 +19,14 @@ public class Interview {
         this.notes = "";
     }
 
-    /** Constructor for restoring from storage. */
-    public Interview(String id, String applicationId, int round, LocalDateTime date, String notes) {
+    // Full constructor — used by FileStorage when loading from disk
+    public Interview(String id, String applicationId, int round,
+                     LocalDateTime date, String notes) {
         this.id = id;
         this.applicationId = applicationId;
         this.round = round;
         this.date = date;
-        this.notes = notes != null ? notes : "";
+        this.notes = notes;
     }
 
     public String getId() { return id; }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="logic.InterviewControllerTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-03-26T04:15:49.301Z" hostname="YUGAM" time="0.021">
+  <properties/>
+  <testcase name="getInterviewsByApplication_sortedByRound()" classname="logic.InterviewControllerTest" time="0.003"/>
+  <testcase name="updateNotes_validId_updatesNotes()" classname="logic.InterviewControllerTest" time="0.003"/>
+  <testcase name="updateNotes_invalidId_throwsException()" classname="logic.InterviewControllerTest" time="0.003"/>
+  <testcase name="addInterview_validInput_returnsInterview()" classname="logic.InterviewControllerTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

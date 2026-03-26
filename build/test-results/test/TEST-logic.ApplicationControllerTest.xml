@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="logic.ApplicationControllerTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-03-26T04:15:49.166Z" hostname="YUGAM" time="0.128">
+  <properties/>
+  <testcase name="getAllApplications_emptyList_returnsEmptyList()" classname="logic.ApplicationControllerTest" time="0.028"/>
+  <testcase name="deleteApplication_existingId_removesFromList()" classname="logic.ApplicationControllerTest" time="0.014"/>
+  <testcase name="compareApplications_sortedByPayDescending()" classname="logic.ApplicationControllerTest" time="0.01"/>
+  <testcase name="deleteApplication_invalidId_throwsException()" classname="logic.ApplicationControllerTest" time="0.006"/>
+  <testcase name="updateStatus_validTransition_updatesCorrectly()" classname="logic.ApplicationControllerTest" time="0.003"/>
+  <testcase name="filterByStatus_returnsOnlyMatchingStatus()" classname="logic.ApplicationControllerTest" time="0.005"/>
+  <testcase name="getAllApplications_afterAdding_returnsAll()" classname="logic.ApplicationControllerTest" time="0.003"/>
+  <testcase name="addApplication_nullRoleTitle_throwsException()" classname="logic.ApplicationControllerTest" time="0.003"/>
+  <testcase name="addApplication_validInput_returnsApplication()" classname="logic.ApplicationControllerTest" time="0.003"/>
+  <testcase name="updateStatus_invalidId_throwsException()" classname="logic.ApplicationControllerTest" time="0.004"/>
+  <testcase name="addApplication_emptyCompanyName_throwsException()" classname="logic.ApplicationControllerTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

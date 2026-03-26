@@ -10,6 +10,7 @@ public class Reminder {
     private final LocalDate triggerDate;
     private boolean dismissed;
 
+    // Standard constructor — used when creating a new reminder
     public Reminder(String applicationId, ReminderType type, LocalDate triggerDate) {
         this.id = UUID.randomUUID().toString();
         this.applicationId = applicationId;
@@ -18,8 +19,9 @@ public class Reminder {
         this.dismissed = false;
     }
 
-    /** Constructor for restoring from storage. */
-    public Reminder(String id, String applicationId, ReminderType type, LocalDate triggerDate, boolean dismissed) {
+    // Full constructor — used by FileStorage when loading from disk
+    public Reminder(String id, String applicationId, ReminderType type,
+                    LocalDate triggerDate, boolean dismissed) {
         this.id = id;
         this.applicationId = applicationId;
         this.type = type;

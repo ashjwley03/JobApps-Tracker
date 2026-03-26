@@ -14,6 +14,7 @@ public class Application {
     private LocalDate deadline;
     private String notes;
 
+    // Standard constructor — used when creating a new application
     public Application(String companyName, String roleTitle, double pay,
                        String location, ApplicationStatus status) {
         this.id = UUID.randomUUID().toString();
@@ -27,10 +28,10 @@ public class Application {
         this.notes = "";
     }
 
-    /** Constructor for restoring from storage. */
+    // Full constructor — used by FileStorage when loading from disk
     public Application(String id, String companyName, String roleTitle, double pay,
-                       String location, ApplicationStatus status, LocalDate dateApplied,
-                       LocalDate deadline, String notes) {
+                       String location, ApplicationStatus status,
+                       LocalDate dateApplied, LocalDate deadline, String notes) {
         this.id = id;
         this.companyName = companyName;
         this.roleTitle = roleTitle;
@@ -39,7 +40,7 @@ public class Application {
         this.status = status;
         this.dateApplied = dateApplied;
         this.deadline = deadline;
-        this.notes = notes != null ? notes : "";
+        this.notes = notes;
     }
 
     public String getId() { return id; }
