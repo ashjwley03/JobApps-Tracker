@@ -96,6 +96,24 @@ public class DashboardController {
         populateCharts(apps);
     }
 
+    /**
+     * Returns whether the given application matches the search keyword.
+     * Matches against company name and role title, case-insensitively.
+     * Package-private to allow direct invocation from tests without requiring JavaFX.
+     *
+     * @param app     The application to test.
+     * @param keyword The search keyword, already trimmed and lowercased.
+     * @return True if the application matches or keyword is empty, false otherwise.
+     */
+    boolean matchesSearch(Application app, String keyword) {
+        if (keyword.isEmpty()) {
+            return true;
+        }
+        String lowerKeyword = keyword.toLowerCase();
+        return app.getCompanyName().toLowerCase().contains(lowerKeyword)
+                || app.getRoleTitle().toLowerCase().contains(lowerKeyword);
+    }
+
     private void setupTable() {
         colCompany.setCellValueFactory(new PropertyValueFactory<>("companyName"));
         colRole.setCellValueFactory(new PropertyValueFactory<>("roleTitle"));
@@ -177,9 +195,6 @@ public class DashboardController {
     @FXML
     private void handleSearch() {
         String keyword = searchField.getText().toLowerCase().trim();
-        filteredList.setPredicate(entry ->
-                keyword.isEmpty()
-                        || entry.getCompanyName().toLowerCase().contains(keyword)
-                        || entry.getRoleTitle().toLowerCase().contains(keyword));
+        filteredList.setPredicate(entry -> matchesSearch(entry, keyword));
     }
 }

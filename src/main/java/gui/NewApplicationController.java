@@ -57,6 +57,29 @@ public class NewApplicationController {
     }
 
     /**
+     * Validates the given form field values without requiring JavaFX controls.
+     * Package-private to allow direct invocation from tests.
+     *
+     * @param company  Company name entered by the user.
+     * @param role     Role title entered by the user.
+     * @param payText  Pay value entered by the user, may be empty.
+     * @return An error message string if validation fails, or null if all inputs are valid.
+     */
+    String validateInput(String company, String role, String payText) {
+        if (company.isEmpty() || role.isEmpty()) {
+            return "Company, Role, and Status are required.";
+        }
+        if (!payText.isEmpty()) {
+            try {
+                Double.parseDouble(payText);
+            } catch (NumberFormatException e) {
+                return "Pay must be a valid number.";
+            }
+        }
+        return null;
+    }
+
+    /**
      * Validates required fields and saves the new application via ApplicationController.
      * Deadline and notes can be set later via an edit screen.
      */
@@ -66,24 +89,24 @@ public class NewApplicationController {
         String role    = roleField.getText().trim();
         ApplicationStatus status = statusChoice.getValue();
 
-        if (company.isEmpty() || role.isEmpty() || status == null) {
+        if (status == null) {
             errorLabel.setText("Company, Role, and Status are required.");
+            return;
+        }
+
+        String error = validateInput(company, role, payField.getText().trim());
+        if (error != null) {
+            errorLabel.setText(error);
             return;
         }
 
         double pay = 0;
         String payText = payField.getText().trim();
         if (!payText.isEmpty()) {
-            try {
-                pay = Double.parseDouble(payText);
-            } catch (NumberFormatException e) {
-                errorLabel.setText("Pay must be a valid number.");
-                return;
-            }
+            pay = Double.parseDouble(payText);
         }
 
         String location = locationField.getText().trim();
-
         appController.addApplication(company, role, pay, location, status);
 
         if (onSuccess != null) {

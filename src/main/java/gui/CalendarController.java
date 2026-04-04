@@ -96,6 +96,20 @@ public class CalendarController {
         buildCalendar();
     }
 
+    /**
+     * Returns the number of events mapped to the given date.
+     * Package-private to allow access from tests without requiring JavaFX.
+     *
+     * @param date The date to check.
+     * @return Number of events on that date.
+     */
+    int getEventCountForDate(LocalDate date) {
+        if (eventMap == null) {
+            return 0;
+        }
+        return eventMap.getOrDefault(date, Collections.emptyList()).size();
+    }
+
     @FXML
     private void handlePrevMonth() {
         currentMonth = currentMonth.minusMonths(1);
@@ -108,7 +122,11 @@ public class CalendarController {
         buildCalendar();
     }
 
-    private void loadEvents() {
+    /**
+     * Builds the event map from all deadlines, interviews, and reminders.
+     * Package-private to allow direct invocation from tests without requiring JavaFX.
+     */
+    void loadEvents() {
         eventMap = new HashMap<>();
 
         // Deadlines — sourced from all applications that have a deadline set

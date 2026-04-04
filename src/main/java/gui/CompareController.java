@@ -16,6 +16,7 @@ import logic.Application;
 import logic.ApplicationController;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -72,6 +73,20 @@ public class CompareController {
     public void loadData() {
         loadApplications();
         setupListView();
+    }
+
+    /**
+     * Returns the compared and sorted list of applications for the given IDs.
+     * Package-private to allow direct invocation from tests without requiring JavaFX.
+     *
+     * @param ids List of application IDs to compare.
+     * @return Applications sorted by pay descending, or an empty list if ids is empty.
+     */
+    List<Application> getComparedApplications(List<String> ids) {
+        if (ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return appController.compareApplications(ids);
     }
 
     private void setupTable() {
