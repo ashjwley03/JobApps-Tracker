@@ -6,7 +6,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import logic.ApplicationController;
 import logic.ApplicationStatus;
-import storage.FileStorage;
 
 /**
  * Controls the new application form view.
@@ -21,11 +20,20 @@ public class NewApplicationController {
     @FXML private TextField locationField;
     @FXML private Label errorLabel;
 
-    private final ApplicationController appController =
-            new ApplicationController(new FileStorage());
+    private ApplicationController appController;
 
     /** Callback invoked after a successful save or a cancel action to return to the previous view. */
     private Runnable onSuccess;
+
+    /**
+     * Sets the ApplicationController used to persist new applications.
+     * Must be called by MainController before the view is displayed.
+     *
+     * @param appController The application controller to use.
+     */
+    public void setAppController(ApplicationController appController) {
+        this.appController = appController;
+    }
 
     /**
      * Registers a callback to invoke when the form is submitted successfully or cancelled.

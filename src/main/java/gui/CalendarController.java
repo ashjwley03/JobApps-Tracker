@@ -31,20 +31,57 @@ public class CalendarController {
 
     private YearMonth currentMonth;
 
-    private final FileStorage fileStorage = new FileStorage();
-    private final ApplicationController appController  = new ApplicationController(fileStorage);
-    private final ReminderService       reminderService = new ReminderService(fileStorage);
+    private ApplicationController appController;
+    private ReminderService reminderService;
+    private FileStorage fileStorage;
 
     /** Maps each date to a list of event badges to render in the calendar cell. */
     private Map<LocalDate, List<CalendarEventBadge>> eventMap;
 
     /**
+     * Sets the ApplicationController used to load application deadlines.
+     * Must be called by MainController before the view is displayed.
+     *
+     * @param appController The application controller to use.
+     */
+    public void setAppController(ApplicationController appController) {
+        this.appController = appController;
+    }
+
+    /**
+     * Sets the ReminderService used to load upcoming reminders.
+     * Must be called by MainController before the view is displayed.
+     *
+     * @param reminderService The reminder service to use.
+     */
+    public void setReminderService(ReminderService reminderService) {
+        this.reminderService = reminderService;
+    }
+
+    /**
+     * Sets the FileStorage used to load interview data.
+     * Must be called by MainController before the view is displayed.
+     *
+     * @param fileStorage The file storage instance to use.
+     */
+    public void setFileStorage(FileStorage fileStorage) {
+        this.fileStorage = fileStorage;
+    }
+
+    /**
      * Initialises the controller after the FXML has been loaded.
-     * Sets the displayed month to the current month and renders the calendar grid.
+     * Sets the displayed month to the current month.
      */
     @FXML
     public void initialize() {
         currentMonth = YearMonth.now();
+    }
+
+    /**
+     * Loads event data and renders the calendar grid.
+     * Called by MainController immediately after all dependencies have been injected.
+     */
+    public void loadData() {
         loadEvents();
         buildCalendar();
     }
@@ -127,7 +164,8 @@ public class CalendarController {
                         dayLabel.getStyleClass().add("calendar-day-label-today");
                     }
                     cell.getChildren().add(dayLabel);
-                    
+
+                    // Event badges — colors are data-driven so inline style stays
                     for (CalendarEventBadge event : eventMap.getOrDefault(cellDate, Collections.emptyList())) {
                         Label badge = new Label(truncate(event.label(), 15));
                         badge.setMaxWidth(Double.MAX_VALUE);

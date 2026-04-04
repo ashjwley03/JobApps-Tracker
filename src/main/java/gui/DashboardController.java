@@ -19,7 +19,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import logic.Application;
 import logic.ApplicationController;
 import logic.ApplicationStatus;
-import storage.FileStorage;
 
 import java.util.List;
 
@@ -48,10 +47,18 @@ public class DashboardController {
     private final ObservableList<Application> masterList = FXCollections.observableArrayList();
     private FilteredList<Application> filteredList;
 
-    private final ApplicationController appController =
-            new ApplicationController(new FileStorage());
-
+    private ApplicationController appController;
     private Runnable onNewApplication;
+
+    /**
+     * Sets the ApplicationController used to load and manage applications.
+     * Must be called by MainController before the view is displayed.
+     *
+     * @param appController The application controller to use.
+     */
+    public void setAppController(ApplicationController appController) {
+        this.appController = appController;
+    }
 
     /**
      * Registers a callback invoked when the user requests to add a new application.
@@ -70,6 +77,13 @@ public class DashboardController {
     @FXML
     public void initialize() {
         setupTable();
+    }
+
+    /**
+     * Loads and displays application data after dependencies have been injected.
+     * Called by MainController immediately after setAppController.
+     */
+    public void loadData() {
         List<Application> apps = appController.getAllApplications();
         masterList.setAll(apps);
         populateStats(apps);

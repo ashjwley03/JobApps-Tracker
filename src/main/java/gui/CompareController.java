@@ -6,15 +6,14 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.CheckBoxListCell;
 import logic.Application;
 import logic.ApplicationController;
-import storage.FileStorage;
 
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -38,12 +37,21 @@ public class CompareController {
     @FXML private TableColumn<Application, String> colDeadline;
     @FXML private Label hintLabel;
 
-    private final ApplicationController appController =
-            new ApplicationController(new FileStorage());
+    private ApplicationController appController;
 
     private final Map<String, BooleanProperty> checkedState = new LinkedHashMap<>();
     private final ObservableList<Application> allApps      = FXCollections.observableArrayList();
     private final ObservableList<Application> selectedApps = FXCollections.observableArrayList();
+
+    /**
+     * Sets the ApplicationController used to load and compare applications.
+     * Must be called by MainController before the view is displayed.
+     *
+     * @param appController The application controller to use.
+     */
+    public void setAppController(ApplicationController appController) {
+        this.appController = appController;
+    }
 
     /**
      * Initialises the controller after the FXML has been loaded.
@@ -52,6 +60,13 @@ public class CompareController {
     @FXML
     public void initialize() {
         setupTable();
+    }
+
+    /**
+     * Loads application data and configures the list view after dependencies have been injected.
+     * Called by MainController immediately after setAppController.
+     */
+    public void loadData() {
         loadApplications();
         setupListView();
     }

@@ -5,6 +5,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
+import logic.ApplicationController;
+import logic.ReminderService;
+import storage.FileStorage;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,6 +15,8 @@ import java.util.List;
 /**
  * Controls the main window of the application.
  * Handles navigation between views and highlights the active sidebar button.
+ * Owns the single instances of FileStorage, ApplicationController, and ReminderService
+ * that are injected into all child controllers.
  */
 public class MainController {
 
@@ -21,6 +26,10 @@ public class MainController {
     @FXML private Button btnCompare;
 
     private List<Button> navButtons;
+
+    private final FileStorage fileStorage = new FileStorage();
+    private final ApplicationController appController = new ApplicationController(fileStorage);
+    private final ReminderService reminderService = new ReminderService(fileStorage);
 
     /**
      * Initialises the controller after the FXML has been loaded.
@@ -52,7 +61,9 @@ public class MainController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/DashboardView.fxml"));
             Node view = loader.load();
             DashboardController controller = loader.getController();
+            controller.setAppController(appController);
             controller.setOnNewApplication(this::showNewApplication);
+            controller.loadData();
             contentArea.getChildren().setAll(view);
         } catch (IOException e) {
             throw new RuntimeException("Failed to load view: /view/DashboardView.fxml", e);
@@ -64,6 +75,7 @@ public class MainController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/NewApplicationView.fxml"));
             Node view = loader.load();
             NewApplicationController controller = loader.getController();
+            controller.setAppController(appController);
             controller.setOnSuccess(this::showDashboard);
             contentArea.getChildren().setAll(view);
         } catch (IOException e) {
@@ -74,22 +86,32 @@ public class MainController {
     @FXML
     private void showCalendar() {
         setActive(btnCalendar);
-        loadView("/view/CalendarView.fxml");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/CalendarView.fxml"));
+            Node view = loader.load();
+            CalendarController controller = loader.getController();
+            controller.setAppController(appController);
+            controller.setReminderService(reminderService);
+            controller.setFileStorage(fileStorage);
+            controller.loadData();
+            contentArea.getChildren().setAll(view);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load view: /view/CalendarView.fxml", e);
+        }
     }
 
     @FXML
     private void showCompare() {
         setActive(btnCompare);
-        loadView("/view/CompareView.fxml");
-    }
-
-    private void loadView(String fxmlPath) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/CompareView.fxml"));
             Node view = loader.load();
+            CompareController controller = loader.getController();
+            controller.setAppController(appController);
+            controller.loadData();
             contentArea.getChildren().setAll(view);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load view: " + fxmlPath, e);
+            throw new RuntimeException("Failed to load view: /view/CompareView.fxml", e);
         }
     }
 }
