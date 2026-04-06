@@ -81,6 +81,14 @@ class FileStorageTest {
     // Application Tests
     // =========================================================================
 
+    /**
+     * Tests for Application CRUD operations.
+     *
+     * Covers saving and loading all fields (including optional deadline and notes),
+     * special-character escaping, duplicate prevention, update/delete correctness,
+     * boundary values for numeric fields, all ApplicationStatus enum values,
+     * and persistence across separate FileStorage instances.
+     */
     @Nested
     class ApplicationTests {
 
@@ -275,6 +283,13 @@ class FileStorageTest {
     // Interview Tests
     // =========================================================================
 
+    /**
+     * Tests for Interview CRUD operations.
+     *
+     * Covers saving and loading all fields, pipe-character escaping in notes,
+     * duplicate prevention, multiple rounds per application, update of notes
+     * and date, and persistence across separate FileStorage instances.
+     */
     @Nested
     class InterviewTests {
 
@@ -389,6 +404,14 @@ class FileStorageTest {
     // Reminder Tests
     // =========================================================================
 
+    /**
+     * Tests for Reminder CRUD operations.
+     *
+     * Covers saving and loading all fields, all ReminderType enum values,
+     * persistence of the dismissed flag (both true and false), duplicate
+     * prevention, update correctness, and persistence across separate
+     * FileStorage instances.
+     */
     @Nested
     class ReminderTests {
 
@@ -491,6 +514,14 @@ class FileStorageTest {
     // Infrastructure / Cross-Entity Tests
     // =========================================================================
 
+    /**
+     * Tests for storage infrastructure and cross-entity behaviour.
+     *
+     * Covers automatic data directory creation, isolation between the three
+     * entity files, sequential deletion, bulk save/load at scale, and
+     * corrupt-line recovery (malformed rows in a .dat file must be silently
+     * skipped without affecting valid rows).
+     */
     @Nested
     class InfrastructureTests {
 
@@ -558,6 +589,53 @@ class FileStorageTest {
                         .findFirst().orElseThrow();
                 assertEquals(i * 100.0, a.getPay(), 0.001);
             }
+        }
+
+        @Test
+        void corruptApplicationLine_skippedAndValidRowsStillLoaded() throws IOException {
+            // Write one valid application followed by a malformed line directly to the file.
+            // FileStorage must skip the corrupt row and still return the valid one.
+            Application good = makeApp("ValidCo", "Engineer");
+            storage.saveApplication(good);
+
+            Path dataFile = tempDir.resolve("applications.dat");
+            String corrupt = "this-is-not|enough-fields";  // only 2 fields, needs 9
+            Files.writeString(dataFile, Files.readString(dataFile) + corrupt + System.lineSeparator());
+
+            List<Application> loaded = freshStorage().loadAllApplications();
+            assertEquals(1, loaded.size(), "Corrupt line should be silently skipped");
+            assertEquals("ValidCo", loaded.get(0).getCompanyName());
+        }
+
+        @Test
+        void corruptInterviewLine_skippedAndValidRowsStillLoaded() throws IOException {
+            // Same scenario as above, but for the interviews file.
+            Interview good = new Interview("app-1", 1, LocalDateTime.of(2025, 4, 1, 10, 0));
+            storage.saveInterview(good);
+
+            Path dataFile = tempDir.resolve("interviews.dat");
+            String corrupt = "bad|data";  // only 2 fields, needs 5
+            Files.writeString(dataFile, Files.readString(dataFile) + corrupt + System.lineSeparator());
+
+            List<Interview> loaded = freshStorage().loadAllInterviews();
+            assertEquals(1, loaded.size(), "Corrupt line should be silently skipped");
+            assertEquals("app-1", loaded.get(0).getApplicationId());
+        }
+
+        @Test
+        void corruptReminderLine_skippedAndValidRowsStillLoaded() throws IOException {
+            // Same scenario as above, but for the reminders file.
+            Reminder good = new Reminder("app-1", ReminderType.DEADLINE, LocalDate.of(2025, 6, 1));
+            storage.saveReminder(good);
+
+            Path dataFile = tempDir.resolve("reminders.dat");
+            // Five fields but invalid date and unknown type — parse will fail
+            String corrupt = "some-id|app-1|NOT_A_TYPE|not-a-date|false";
+            Files.writeString(dataFile, Files.readString(dataFile) + corrupt + System.lineSeparator());
+
+            List<Reminder> loaded = freshStorage().loadAllReminders();
+            assertEquals(1, loaded.size(), "Corrupt line should be silently skipped");
+            assertEquals(ReminderType.DEADLINE, loaded.get(0).getType());
         }
     }
 }
