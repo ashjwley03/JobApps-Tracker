@@ -56,7 +56,15 @@ class FileStorageTest {
         if (tempDir != null && Files.exists(tempDir)) {
             Files.walk(tempDir)
                     .sorted((a, b) -> -a.compareTo(b))
-                    .forEach(p -> { try { Files.delete(p); } catch (IOException ignored) {} });
+                    .forEach(p -> {
+                        try {
+                            Files.delete(p);
+                        } catch (IOException e) {
+                            // Best-effort cleanup — if a temp file cannot be deleted (e.g. locked
+                            // by the OS), it is safe to ignore: the OS will reclaim it eventually
+                            // and it does not affect the correctness of any test.
+                        }
+                    });
         }
     }
 
@@ -92,15 +100,15 @@ class FileStorageTest {
     @Nested
     class ApplicationTests {
 
+        /** Verifies that loading from a non-existent file returns an empty list, not an exception. */
         @Test
         void loadAll_noDataFile_returnsEmptyList() {
-            // File hasn't been created yet — must return empty, not throw
             assertTrue(storage.loadAllApplications().isEmpty());
         }
 
+        /** Verifies that all nine Application fields survive a full write-then-read cycle. */
         @Test
         void save_allFieldsRoundTrip() {
-            // Every field, including optional deadline and notes, must survive write-read
             Application app = new Application("Google", "SWE Intern", 5500.50,
                     "Singapore", ApplicationStatus.APPLIED);
             app.setDeadline(LocalDate.of(2025, 8, 31));
@@ -121,22 +129,26 @@ class FileStorageTest {
             );
         }
 
+        /** Verifies that a null deadline is stored as blank and loaded back as null. */
         @Test
         void save_nullDeadline_loadsAsNull() {
-            // Deadline is optional — a blank entry in the file must round-trip to null
             storage.saveApplication(makeApp("Meta", "PM"));
             assertNull(storage.loadAllApplications().get(0).getDeadline());
         }
 
+        /** Verifies that an empty notes field is stored and loaded as an empty string, not null. */
         @Test
         void save_emptyNotes_loadsAsEmptyString() {
             storage.saveApplication(makeApp("Grab", "Analyst"));
             assertEquals("", storage.loadAllApplications().get(0).getNotes());
         }
 
+        /**
+         * Verifies that pipe characters ('|') in user-supplied fields are escaped on write
+         * and unescaped on read, so they do not break the pipe-delimited format.
+         */
         @Test
         void save_pipeCharInUserFields_escapedAndRestoredCorrectly() {
-            // '|' is the field separator — data containing it must be escaped so parsing stays correct
             Application app = new Application(
                     "Foo|Bar Corp", "Role|With|Pipes", 4000, "City|Town", ApplicationStatus.APPLIED);
             app.setNotes("Note with | a pipe");
@@ -149,15 +161,16 @@ class FileStorageTest {
             assertEquals("Note with | a pipe", loaded.getNotes());
         }
 
+        /** Verifies that saving the same Application twice does not create a duplicate record. */
         @Test
         void save_duplicateId_notStoredTwice() {
-            // Calling save with the same object twice must not create a duplicate row
             Application app = makeApp("Apple", "iOS Intern");
             storage.saveApplication(app);
             storage.saveApplication(app);
             assertEquals(1, storage.loadAllApplications().size());
         }
 
+        /** Verifies that multiple Applications are all stored and loaded in insertion order. */
         @Test
         void save_multipleEntries_allPersistedInInsertionOrder() {
             Application a1 = makeApp("Alpha", "Intern");
@@ -174,6 +187,7 @@ class FileStorageTest {
             assertEquals("Gamma", all.get(2).getCompanyName());
         }
 
+        /** Verifies that a pay value of zero is not dropped or altered during serialisation. */
         @Test
         void save_zeroPay_roundTripsCorrectly() {
             Application app = new Application("Nonprofit", "Volunteer", 0.0, "Remote", ApplicationStatus.APPLIED);
@@ -181,6 +195,7 @@ class FileStorageTest {
             assertEquals(0.0, storage.loadAllApplications().get(0).getPay(), 0.001);
         }
 
+        /** Verifies that a fractional pay value retains its decimal precision after serialisation. */
         @Test
         void save_decimalPay_roundTripsCorrectly() {
             Application app = new Application("Bank", "Analyst", 4567.89, "NYC", ApplicationStatus.APPLIED);
@@ -188,9 +203,9 @@ class FileStorageTest {
             assertEquals(4567.89, storage.loadAllApplications().get(0).getPay(), 0.001);
         }
 
+        /** Verifies that every ApplicationStatus enum value serialises and deserialises correctly. */
         @Test
         void save_everyApplicationStatus_roundTripsCorrectly() {
-            // Ensure every enum variant serialises and deserialises without error
             for (ApplicationStatus status : ApplicationStatus.values()) {
                 FileStorage iso = new FileStorage(tempDir.resolve("status-" + status.name()).toString());
                 Application app = new Application("Co", "Role", 1000, "SG", status);
@@ -200,6 +215,7 @@ class FileStorageTest {
             }
         }
 
+        /** Verifies that updating an Application changes only the entry with the matching ID. */
         @Test
         void update_modifiesOnlyMatchingEntry() {
             Application a1 = makeApp("Google", "SWE");
@@ -222,9 +238,9 @@ class FileStorageTest {
             assertEquals("",                        reloaded2.getNotes());
         }
 
+        /** Verifies that updating an ID that was never saved does not corrupt existing records. */
         @Test
         void update_nonExistentId_doesNotCorruptExistingData() {
-            // Update should be a safe no-op for IDs that were never saved
             Application real  = makeApp("Real Co", "Real Role");
             Application ghost = new Application("ghost-id", "Nobody", "Nothing",
                     0, "Nowhere", ApplicationStatus.REJECTED,
@@ -237,6 +253,7 @@ class FileStorageTest {
                     .anyMatch(a -> a.getId().equals(real.getId())));
         }
 
+        /** Verifies that deleting one Application leaves all other entries intact. */
         @Test
         void delete_removesOnlyMatchingEntry() {
             Application keep   = makeApp("Keep Me",   "Role");
@@ -251,6 +268,7 @@ class FileStorageTest {
             assertEquals("Keep Me", remaining.get(0).getCompanyName());
         }
 
+        /** Verifies that deleting the only Application leaves an empty list, not an error. */
         @Test
         void delete_lastEntry_leavesEmptyList() {
             Application app = makeApp("Solo", "Role");
@@ -259,6 +277,7 @@ class FileStorageTest {
             assertTrue(storage.loadAllApplications().isEmpty());
         }
 
+        /** Verifies that deleting a non-existent ID is a safe no-op and leaves existing data intact. */
         @Test
         void delete_nonExistentId_leavesDataIntact() {
             storage.saveApplication(makeApp("Intact", "Role"));
@@ -266,9 +285,9 @@ class FileStorageTest {
             assertEquals(1, storage.loadAllApplications().size());
         }
 
+        /** Verifies that data written by one FileStorage instance is readable by a separate instance pointing at the same directory. */
         @Test
         void persistence_dataReadableByNewStorageInstance() {
-            // Verifies that data isn't cached in memory — a brand-new instance must read the same data
             Application app = makeApp("Persist Co", "Engineer");
             app.setNotes("persisted note");
             storage.saveApplication(app);
@@ -293,11 +312,13 @@ class FileStorageTest {
     @Nested
     class InterviewTests {
 
+        /** Verifies that loading from a non-existent file returns an empty list, not an exception. */
         @Test
         void loadAll_noDataFile_returnsEmptyList() {
             assertTrue(storage.loadAllInterviews().isEmpty());
         }
 
+        /** Verifies that all five Interview fields survive a full write-then-read cycle. */
         @Test
         void save_allFieldsRoundTrip() {
             Interview i = new Interview("app-123", 1, LocalDateTime.of(2025, 6, 15, 10, 30));
@@ -314,6 +335,7 @@ class FileStorageTest {
             );
         }
 
+        /** Verifies that an Interview with no notes stores and loads as an empty string. */
         @Test
         void save_emptyNotes_loadsAsEmptyString() {
             Interview i = new Interview("app-1", 2, LocalDateTime.now());
@@ -321,6 +343,7 @@ class FileStorageTest {
             assertEquals("", storage.loadAllInterviews().get(0).getNotes());
         }
 
+        /** Verifies that pipe characters in interview notes are escaped and restored correctly. */
         @Test
         void save_pipeCharInNotes_escapedAndRestoredCorrectly() {
             Interview i = new Interview("app-1", 1, LocalDateTime.of(2025, 1, 1, 9, 0));
@@ -330,6 +353,7 @@ class FileStorageTest {
                     storage.loadAllInterviews().get(0).getNotes());
         }
 
+        /** Verifies that saving the same Interview twice does not create a duplicate record. */
         @Test
         void save_duplicateId_notStoredTwice() {
             Interview i = new Interview("app-1", 1, LocalDateTime.now());
@@ -338,6 +362,7 @@ class FileStorageTest {
             assertEquals(1, storage.loadAllInterviews().size());
         }
 
+        /** Verifies that multiple interview rounds for the same application are all persisted. */
         @Test
         void save_multipleRoundsForSameApplication() {
             Interview r1 = new Interview("app-1", 1, LocalDateTime.of(2025, 3, 1,  10, 0));
@@ -352,6 +377,7 @@ class FileStorageTest {
             assertTrue(all.stream().allMatch(i -> i.getApplicationId().equals("app-1")));
         }
 
+        /** Verifies that interviews belonging to different applications are all stored independently. */
         @Test
         void save_interviewsForDifferentApplications_allPersisted() {
             storage.saveInterview(new Interview("app-A", 1, LocalDateTime.now()));
@@ -359,6 +385,7 @@ class FileStorageTest {
             assertEquals(2, storage.loadAllInterviews().size());
         }
 
+        /** Verifies that updating an Interview correctly persists changes to both notes and date. */
         @Test
         void update_modifiesNotesAndDate() {
             Interview i = new Interview("app-1", 1, LocalDateTime.of(2025, 4, 1, 10, 0));
@@ -373,6 +400,7 @@ class FileStorageTest {
             assertEquals(LocalDateTime.of(2025, 4, 2, 11, 0), loaded.getDate());
         }
 
+        /** Verifies that updating one Interview does not affect any other stored interviews. */
         @Test
         void update_onlyTargetEntryChanged() {
             Interview i1 = new Interview("app-1", 1, LocalDateTime.of(2025, 1, 1, 9, 0));
@@ -389,6 +417,7 @@ class FileStorageTest {
             assertEquals("", reloaded2.getNotes());
         }
 
+        /** Verifies that Interview data written by one FileStorage instance is readable by a separate instance. */
         @Test
         void persistence_dataReadableByNewStorageInstance() {
             Interview i = new Interview("app-abc", 2, LocalDateTime.of(2025, 7, 1, 14, 0));
@@ -415,11 +444,13 @@ class FileStorageTest {
     @Nested
     class ReminderTests {
 
+        /** Verifies that loading from a non-existent file returns an empty list, not an exception. */
         @Test
         void loadAll_noDataFile_returnsEmptyList() {
             assertTrue(storage.loadAllReminders().isEmpty());
         }
 
+        /** Verifies that all five Reminder fields survive a full write-then-read cycle. */
         @Test
         void save_allFieldsRoundTrip() {
             Reminder r = new Reminder("app-1", ReminderType.DEADLINE, LocalDate.of(2025, 9, 30));
@@ -435,6 +466,7 @@ class FileStorageTest {
             );
         }
 
+        /** Verifies that every ReminderType enum value serialises and deserialises correctly. */
         @Test
         void save_everyReminderType_roundTripsCorrectly() {
             for (ReminderType type : ReminderType.values()) {
@@ -445,9 +477,9 @@ class FileStorageTest {
             }
         }
 
+        /** Verifies that a dismissed Reminder retains its dismissed state after a write-read cycle. */
         @Test
         void save_dismissedReminder_persistsDismissedTrue() {
-            // A dismissed reminder must still be dismissed after a write-read cycle
             Reminder r = new Reminder("app-1", ReminderType.FOLLOWUP, LocalDate.now());
             r.dismiss();
             assertTrue(r.isDismissed());
@@ -456,6 +488,7 @@ class FileStorageTest {
             assertTrue(storage.loadAllReminders().get(0).isDismissed());
         }
 
+        /** Verifies that saving the same Reminder twice does not create a duplicate record. */
         @Test
         void save_duplicateId_notStoredTwice() {
             Reminder r = new Reminder("app-1", ReminderType.INTERVIEW, LocalDate.now());
@@ -464,6 +497,7 @@ class FileStorageTest {
             assertEquals(1, storage.loadAllReminders().size());
         }
 
+        /** Verifies that multiple Reminders of different types are all stored and loadable. */
         @Test
         void save_multipleReminders_allPersisted() {
             storage.saveReminder(new Reminder("app-1", ReminderType.DEADLINE,  LocalDate.of(2025, 5, 1)));
@@ -472,6 +506,7 @@ class FileStorageTest {
             assertEquals(3, storage.loadAllReminders().size());
         }
 
+        /** Verifies that dismissing a Reminder and calling updateReminder persists the dismissed state. */
         @Test
         void update_dismissedStatePersistsAfterUpdate() {
             Reminder r = new Reminder("app-1", ReminderType.DEADLINE, LocalDate.of(2025, 6, 1));
@@ -483,6 +518,7 @@ class FileStorageTest {
             assertTrue(storage.loadAllReminders().get(0).isDismissed());
         }
 
+        /** Verifies that updating one Reminder does not affect any other stored reminders. */
         @Test
         void update_onlyTargetEntryChanged() {
             Reminder r1 = new Reminder("app-1", ReminderType.DEADLINE,  LocalDate.of(2025, 5, 1));
@@ -499,6 +535,7 @@ class FileStorageTest {
             assertFalse(reloaded2.isDismissed(), "r2 should not be affected by update to r1");
         }
 
+        /** Verifies that Reminder data written by one FileStorage instance is readable by a separate instance. */
         @Test
         void persistence_dataReadableByNewStorageInstance() {
             Reminder r = new Reminder("app-xyz", ReminderType.FOLLOWUP, LocalDate.of(2025, 12, 25));
@@ -525,18 +562,18 @@ class FileStorageTest {
     @Nested
     class InfrastructureTests {
 
+        /** Verifies that FileStorage creates the data directory automatically on first write, even for nested paths. */
         @Test
         void dataDirectory_createdAutomatically_whenMissing() throws IOException {
-            // FileStorage must create the directory on first write, even if it doesn't exist
             Path newDir = tempDir.resolve("nested/deep/dir");
             FileStorage s = new FileStorage(newDir.toString());
             s.saveApplication(makeApp("Test", "Role"));
             assertTrue(Files.exists(newDir), "Data directory should be auto-created");
         }
 
+        /** Verifies that writes to one entity type do not corrupt or affect the other entity files. */
         @Test
         void entityTypes_doNotInterfereWithEachOther() {
-            // Writing applications must not corrupt the interviews or reminders file
             storage.saveApplication(makeApp("Google", "SWE"));
             storage.saveInterview(new Interview("app-1", 1, LocalDateTime.now()));
             storage.saveReminder(new Reminder("app-1", ReminderType.DEADLINE, LocalDate.now()));
@@ -546,6 +583,7 @@ class FileStorageTest {
             assertEquals(1, storage.loadAllReminders().size());
         }
 
+        /** Verifies that deleting all entries one by one eventually leaves a fully empty list. */
         @Test
         void delete_allEntriesOneByOne_leavesEmptyList() {
             Application a1 = makeApp("A", "Role");
@@ -565,18 +603,18 @@ class FileStorageTest {
             assertTrue(storage.loadAllApplications().isEmpty());
         }
 
+        /** Verifies that 100 Applications can be saved and fully loaded without silent truncation. */
         @Test
         void bulkSave_100Applications_allLoadedCorrectly() {
-            // Catches any silent truncation at scale
             for (int i = 0; i < 100; i++) {
                 storage.saveApplication(makeApp("Company" + i, "Role" + i));
             }
             assertEquals(100, storage.loadAllApplications().size());
         }
 
+        /** Verifies that pay values are preserved accurately across 50 records to catch numeric serialisation drift. */
         @Test
         void bulkSave_preservesAllPayValues() {
-            // Ensure numeric serialisation is stable for many records
             for (int i = 0; i < 50; i++) {
                 storage.saveApplication(
                         new Application("Co" + i, "Role", i * 100.0, "SG", ApplicationStatus.APPLIED));
@@ -591,10 +629,12 @@ class FileStorageTest {
             }
         }
 
+        /**
+         * Verifies that a malformed line in applications.dat is silently skipped
+         * and does not prevent valid rows from being loaded.
+         */
         @Test
         void corruptApplicationLine_skippedAndValidRowsStillLoaded() throws IOException {
-            // Write one valid application followed by a malformed line directly to the file.
-            // FileStorage must skip the corrupt row and still return the valid one.
             Application good = makeApp("ValidCo", "Engineer");
             storage.saveApplication(good);
 
@@ -607,9 +647,12 @@ class FileStorageTest {
             assertEquals("ValidCo", loaded.get(0).getCompanyName());
         }
 
+        /**
+         * Verifies that a malformed line in interviews.dat is silently skipped
+         * and does not prevent valid rows from being loaded.
+         */
         @Test
         void corruptInterviewLine_skippedAndValidRowsStillLoaded() throws IOException {
-            // Same scenario as above, but for the interviews file.
             Interview good = new Interview("app-1", 1, LocalDateTime.of(2025, 4, 1, 10, 0));
             storage.saveInterview(good);
 
@@ -622,9 +665,12 @@ class FileStorageTest {
             assertEquals("app-1", loaded.get(0).getApplicationId());
         }
 
+        /**
+         * Verifies that a malformed line in reminders.dat is silently skipped
+         * and does not prevent valid rows from being loaded.
+         */
         @Test
         void corruptReminderLine_skippedAndValidRowsStillLoaded() throws IOException {
-            // Same scenario as above, but for the reminders file.
             Reminder good = new Reminder("app-1", ReminderType.DEADLINE, LocalDate.of(2025, 6, 1));
             storage.saveReminder(good);
 
