@@ -1,4 +1,4 @@
-# March Meet — JobApps Tracker
+#JobApps Tracker
 
 **Version:** V1.5 — Release Candidate
 A desktop application for NUS/NTU students to track internship applications, interviews, deadlines, and offers — all in one place.
