@@ -149,8 +149,11 @@ public class FileStorage implements Storage {
     public void saveInterview(Interview interview) {
         this.ensureDataDir();
         List<Interview> all = this.loadAllInterviews();
-        all.add(interview);
-        this.writeInterviews(all);
+        boolean isDuplicate = all.stream().anyMatch(i -> i.getId().equals(interview.getId()));
+        if (!isDuplicate) {
+            all.add(interview);
+            this.writeInterviews(all);
+        }
     }
 
     /**
@@ -196,8 +199,11 @@ public class FileStorage implements Storage {
     public void saveReminder(Reminder reminder) {
         this.ensureDataDir();
         List<Reminder> all = this.loadAllReminders();
-        all.add(reminder);
-        this.writeReminders(all);
+        boolean isDuplicate = all.stream().anyMatch(r -> r.getId().equals(reminder.getId()));
+        if (!isDuplicate) {
+            all.add(reminder);
+            this.writeReminders(all);
+        }
     }
 
     /**

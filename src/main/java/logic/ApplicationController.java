@@ -94,6 +94,11 @@ public class ApplicationController {
             throw new IllegalStateException("Cannot change status: Application is already ACCEPTED.");
         }
 
+        // Rule : Withdrawn is a terminal state
+        if (current == ApplicationStatus.WITHDRAWN) {
+            throw new IllegalStateException("Cannot change status: Application is already WITHDRAWN.");
+        }
+
         // Rule: Must be INTERVIEWING to receive an OFFER
         if (current == ApplicationStatus.APPLIED && newStatus == ApplicationStatus.OFFER) {
             throw new IllegalStateException("Invalid transition: Must interview before receiving an offer.");
@@ -128,6 +133,18 @@ public class ApplicationController {
                 .sorted((a, b) -> {
                     return Double.compare(b.getPay(), a.getPay());
                 })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Filters and retrieves all applications matching a specific status.
+     *
+     * @param status The target ApplicationStatus to filter by.
+     * @return A list of applications whose current status matches the given status.
+     */
+    public List<Application> filterByStatus(ApplicationStatus status) {
+        return storage.loadAllApplications().stream()
+                .filter(a -> a.getStatus() == status)
                 .collect(Collectors.toList());
     }
 }

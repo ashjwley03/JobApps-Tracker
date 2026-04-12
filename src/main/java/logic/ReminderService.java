@@ -42,7 +42,7 @@ public class ReminderService {
         }
 
         Reminder reminder = new Reminder(applicationId, type, triggerDate);
-        this.storage.saveReminder(reminder);
+        storage.saveReminder(reminder);
         return reminder;
     }
 
