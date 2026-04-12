@@ -99,8 +99,10 @@ class CalendarControllerTest {
      */
     @Test
     void loadEvents_reminderWithinWindow_included() {
+        Application app = appController.addApplication(
+                "TestCo", "Intern", 3000, "SG", ApplicationStatus.APPLIED);
         LocalDate triggerDate = LocalDate.now().plusDays(100);
-        reminderService.addReminder("app-1", ReminderType.DEADLINE, triggerDate);
+        reminderService.addReminder(app.getId(), ReminderType.DEADLINE, triggerDate);
 
         controller.loadEvents();
 
@@ -114,8 +116,10 @@ class CalendarControllerTest {
      */
     @Test
     void loadEvents_reminderBeyondWindow_excluded() {
+        Application app = appController.addApplication(
+                "TestCo", "Intern", 3000, "SG", ApplicationStatus.APPLIED);
         LocalDate triggerDate = LocalDate.now().plusDays(400);
-        reminderService.addReminder("app-1", ReminderType.DEADLINE, triggerDate);
+        reminderService.addReminder(app.getId(), ReminderType.FOLLOWUP, triggerDate);
 
         controller.loadEvents();
 
