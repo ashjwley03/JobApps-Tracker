@@ -27,6 +27,12 @@ hs_err_pid*
 replay_pid*
 
 .idea/
+build/
 .gradle/
+<<<<<<< Updated upstream
 build/
 .DS_Store
+=======
+
+
+>>>>>>> Stashed changes
