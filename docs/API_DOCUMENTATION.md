@@ -389,6 +389,45 @@ Example:
 uuid-9999|uuid-1234|DEADLINE|2026-04-01|false
 ```
 
+### Escaping Rules
+
+| Character | Written As | Restored On Load |
+|:---|:---|:---|
+| `\|` (pipe) | `&#124;` (HTML entity) | `&#124;` → `\|` via `unescape()` |
+| `null` string | `""` (empty string) | `escape(null)` returns `""` |
+
+- **Escape** is applied to all user-editable string fields: `id`, `companyName`, `roleTitle`, `location`, `notes`, `applicationId`, and interview `notes`.
+- **Not escaped**: numeric fields (`pay`, `round`), enum fields (`status`, `type`), date fields (`dateApplied`, `deadline`, `triggerDate`, `date`), and boolean fields (`dismissed`) — these are serialized via `.toString()` / `.name()` directly.
+
+### Parsing Rules & Edge Cases
+
+| Scenario | Behaviour |
+|:---|:---|
+| File does not exist | `readLines()` returns an empty list — treated as no data yet |
+| File exists but is empty | Returns an empty list — no records |
+| Line is `null` or blank | Skipped (`parseXxx()` returns `null`, filtered out) |
+| Line has fewer fields than expected | Skipped (field count check: `< 9` for applications, `< 5` for interviews/reminders) |
+| `pay` is not a valid double | `NumberFormatException` caught → line skipped, logged at `WARNING` |
+| `status` is not a valid `ApplicationStatus` enum | `IllegalArgumentException` caught → line skipped, logged at `WARNING` |
+| `dateApplied` / `deadline` / `date` is malformed | `DateTimeParseException` caught → line skipped, logged at `WARNING` |
+| `deadline` field is empty string | Parsed as `null` (`LocalDate`) — deadline is optional |
+| Duplicate application ID on save | `saveApplication()` checks for existing ID and skips the duplicate |
+| Duplicate interview/reminder ID on save | **Not checked** — callers are responsible for not saving the same object twice |
+| IOException on read | Logged at `SEVERE`, throws `RuntimeException` — GUI catches and shows error dialog |
+| IOException on write | Logged at `SEVERE`, throws `RuntimeException` — GUI catches and shows error dialog |
+| Data directory does not exist | Created automatically by `ensureDataDir()` on first write |
+| Data directory cannot be created | Throws `RuntimeException` — GUI catches and shows error dialog |
+
+### ID Generation
+
+All entity IDs (`Application`, `Interview`, `Reminder`) are generated via `UUID.randomUUID().toString()` at construction time. IDs are immutable (`final`) after creation. The standard constructor (used for new records) generates the ID; the full constructor (used by `FileStorage` when loading from disk) accepts the existing ID.
+
+### File I/O Strategy
+
+- **Parsing**: `split("\\|", -1)` is used to split lines, preserving trailing empty fields.
+- **Writing**: The entire file is rewritten on every save/update/delete operation (`Files.write(path, lines)`). This is a full-rewrite strategy, not append-only.
+- **Concurrency**: No file locking is implemented — the app assumes single-user, single-instance access.
+
 ---
 
 ## 7. Error & Exception Handling
