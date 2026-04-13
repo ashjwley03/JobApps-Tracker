@@ -74,7 +74,7 @@ public class CompareController {
     public void loadData() {
         try {
             loadApplications();
-        } catch (IllegalArgumentException | IllegalStateException e) {
+        } catch (RuntimeException e) {
             GuiUtils.showError("Could Not Load Applications", e.getMessage());
             return;
         }
@@ -183,7 +183,7 @@ public class CompareController {
             List<Application> compared = appController.compareApplications(checkedIds);
             selectedApps.setAll(compared);
             compareTable.refresh();
-        } catch (IllegalArgumentException | IllegalStateException e) {
+        } catch (RuntimeException e) {
             GuiUtils.showError("Could Not Compare Applications", e.getMessage());
         }
     }

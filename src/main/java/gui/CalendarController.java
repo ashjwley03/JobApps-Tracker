@@ -95,9 +95,9 @@ public class CalendarController {
     public void loadData() {
         try {
             loadEvents();
-        } catch (IllegalArgumentException | IllegalStateException e) {
+        } catch (RuntimeException e) {
             GuiUtils.showError("Could Not Load Calendar Data", e.getMessage());
-            eventMap = new HashMap<>(); // render an empty calendar rather than crashing
+            eventMap = new HashMap<>();
         }
         buildCalendar();
     }

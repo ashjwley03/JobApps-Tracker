@@ -120,7 +120,7 @@ public class NewApplicationController {
 
         try {
             appController.addApplication(company, role, pay, location, status);
-        } catch (IllegalArgumentException | IllegalStateException e) {
+        } catch (RuntimeException e) {
             GuiUtils.showError("Could Not Save Application", e.getMessage());
             return;
         }

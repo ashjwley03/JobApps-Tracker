@@ -94,7 +94,7 @@ public class DashboardController {
         List<Application> apps;
         try {
             apps = appController.getAllApplications();
-        } catch (IllegalArgumentException | IllegalStateException e) {
+        } catch (RuntimeException e) {
             GuiUtils.showError("Could Not Load Applications", e.getMessage());
             return;
         }
