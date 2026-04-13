@@ -13,6 +13,13 @@ public class InterviewController {
     }
 
     public Interview addInterview(String applicationId, int round, LocalDateTime date) {
+        boolean appExists = storage.loadAllApplications().stream()
+                .anyMatch(a -> a.getId().equals(applicationId));
+        if (!appExists) {
+            throw new IllegalArgumentException(
+                    "Cannot add interview: Application ID " + applicationId + " not found.");
+        }
+
         Interview interview = new Interview(applicationId, round, date);
         storage.saveInterview(interview);
         return interview;

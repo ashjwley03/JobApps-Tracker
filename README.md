@@ -140,6 +140,19 @@ Each file stores one record per line with fields separated by `|`. Pipe characte
 
 ---
 
+## Known Limitations (Not Yet Implemented)
+
+The following features from the original PRD are **not yet implemented** and are planned for future iterations:
+
+- **Document Vault** — upload and attach resumes, cover letters, or offer letters to applications
+- **Travel Time** — estimate commute time to office locations
+- **Job Scope Filtering** — filter or search applications by job scope, salary range, or location
+- **Calendar Date Drill-Down** — click a date on the calendar to view detailed events for that day
+- **Offer Deadline Setting from UI** — set or edit offer acceptance deadlines directly from the dashboard
+- **Follow-Up Reminder Notes** — attach custom notes or target dates to follow-up reminders
+
+---
+
 ## Documentation
 
 Full API documentation including architecture diagrams, class diagrams, sequence diagrams, and data models is available in [`docs/API_DOCUMENTATION.md`](docs/API_DOCUMENTATION.md).

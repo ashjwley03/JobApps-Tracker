@@ -80,6 +80,13 @@ class InterviewControllerTest {
      * throws an IllegalArgumentException.
      */
     @Test
+    void addInterview_invalidAppId_throwsException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            controller.addInterview("fake-id", 1, LocalDateTime.now().plusDays(1));
+        });
+    }
+
+    @Test
     void updateNotes_invalidId_throwsException() {
         assertThrows(IllegalArgumentException.class, () -> {
             controller.updateNotes("fake-id", "some notes");
