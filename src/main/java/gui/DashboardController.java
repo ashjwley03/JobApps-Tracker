@@ -10,6 +10,7 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -22,10 +23,9 @@ import logic.Application;
 import logic.ApplicationController;
 import logic.ApplicationStatus;
 
-import java.util.function.Consumer;
-
 import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Controls the dashboard view.
@@ -57,6 +57,7 @@ public class DashboardController {
     @FXML private TableColumn<Application, String> colRole;
     @FXML private TableColumn<Application, String> colStatus;
     @FXML private TableColumn<Application, String> colDeadline;
+    @FXML private TableColumn<Application, Void> colAction;
 
     private final ObservableList<Application> masterList = FXCollections.observableArrayList();
     private FilteredList<Application> filteredList;
@@ -86,7 +87,7 @@ public class DashboardController {
     }
 
     /**
-     * Registers a callback invoked when the user double-clicks a row to edit an application.
+     * Registers a callback invoked when the user clicks Edit or double-clicks a row.
      *
      * @param onEditApplication Consumer accepting the Application to edit.
      */
@@ -204,6 +205,25 @@ public class DashboardController {
                 }
             });
             return row;
+        });
+
+        colAction.setCellFactory(col -> new TableCell<>() {
+            private final Button editBtn = new Button("Edit");
+            {
+                editBtn.getStyleClass().add("table-edit-button");
+                editBtn.setOnAction(e -> {
+                    Application app = getTableView().getItems().get(getIndex());
+                    if (onEditApplication != null) {
+                        onEditApplication.accept(app);
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : editBtn);
+            }
         });
 
         filteredList = new FilteredList<>(masterList, p -> true);

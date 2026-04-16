@@ -15,37 +15,46 @@
             <Button text="Back to Dashboard" styleClass="secondary-button" onAction="#handleBack"/>
         </HBox>
 
-        <!-- Read-only details card -->
-        <VBox styleClass="card" spacing="10">
+        <!-- Editable application details card -->
+        <VBox styleClass="card" spacing="14">
             <Label text="Application Details" styleClass="section-title"/>
-            <GridPane hgap="18" vgap="10">
+            <GridPane hgap="18" vgap="14">
                 <columnConstraints>
                     <ColumnConstraints minWidth="110"/>
                     <ColumnConstraints hgrow="ALWAYS"/>
                 </columnConstraints>
 
                 <Label text="Company"    styleClass="form-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <Label fx:id="companyLabel"  style="-fx-text-fill: #2d2f3e;" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <TextField fx:id="companyField" styleClass="form-field"
+                           promptText="e.g. Google"
+                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
                 <Label text="Role"       styleClass="form-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <Label fx:id="roleLabel"     style="-fx-text-fill: #2d2f3e;" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <TextField fx:id="roleField" styleClass="form-field"
+                           promptText="e.g. Software Engineer"
+                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
                 <Label text="Pay"        styleClass="form-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <Label fx:id="payLabel"      style="-fx-text-fill: #2d2f3e;" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <TextField fx:id="payField" styleClass="form-field"
+                           promptText="e.g. 120000"
+                           GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
                 <Label text="Location"   styleClass="form-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                <Label fx:id="locationLabel" style="-fx-text-fill: #2d2f3e;" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                <TextField fx:id="locationField" styleClass="form-field"
+                           promptText="e.g. Singapore"
+                           GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
                 <Label text="Applied On" styleClass="form-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                <Label fx:id="dateAppliedLabel" style="-fx-text-fill: #2d2f3e;" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                <Label fx:id="dateAppliedLabel" style="-fx-text-fill: #2d2f3e;"
+                       GridPane.rowIndex="4" GridPane.columnIndex="1"/>
             </GridPane>
         </VBox>
 
         <Region prefHeight="4"/>
 
-        <!-- Editable fields card -->
+        <!-- Status, deadline, and notes card -->
         <VBox styleClass="card" spacing="14">
-            <Label text="Update Application" styleClass="section-title"/>
+            <Label text="Status &amp; Details" styleClass="section-title"/>
 
             <GridPane hgap="18" vgap="14">
                 <columnConstraints>

@@ -39,7 +39,8 @@ public class Reminder {
      * @param triggerDate   The date when this reminder should trigger.
      * @param dismissed     The current dismissal state of the reminder.
      */
-    public Reminder(String id, String applicationId, ReminderType type, LocalDate triggerDate, boolean dismissed) {
+    public Reminder(String id, String applicationId, ReminderType type,
+                    LocalDate triggerDate, boolean dismissed) {
         this.id = id;
         this.applicationId = applicationId;
         this.type = type;

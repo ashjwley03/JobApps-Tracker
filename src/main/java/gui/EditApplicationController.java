@@ -7,6 +7,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import logic.Application;
 import logic.ApplicationController;
 import logic.ApplicationStatus;
@@ -16,15 +17,16 @@ import java.util.Optional;
 
 /**
  * Controls the edit-application view.
- * Displays read-only details and lets the user update status, deadline, and notes.
+ * Allows the user to modify all application fields including company, role,
+ * pay, location, status, deadline, and notes.
  */
 public class EditApplicationController {
 
     @FXML private Label pageTitleLabel;
-    @FXML private Label companyLabel;
-    @FXML private Label roleLabel;
-    @FXML private Label payLabel;
-    @FXML private Label locationLabel;
+    @FXML private TextField companyField;
+    @FXML private TextField roleField;
+    @FXML private TextField payField;
+    @FXML private TextField locationField;
     @FXML private Label dateAppliedLabel;
     @FXML private ChoiceBox<ApplicationStatus> statusChoice;
     @FXML private Label currentStatusLabel;
@@ -56,7 +58,7 @@ public class EditApplicationController {
     }
 
     /**
-     * Loads the given application's data into the view.
+     * Loads the given application's data into the view fields.
      * Must be called after FXML injection and after setAppController.
      *
      * @param app The application to display and edit.
@@ -65,11 +67,11 @@ public class EditApplicationController {
         this.application = app;
 
         pageTitleLabel.setText(app.getCompanyName() + " — " + app.getRoleTitle());
-        companyLabel.setText(app.getCompanyName());
-        roleLabel.setText(app.getRoleTitle());
-        payLabel.setText(app.getPay() > 0 ? String.format("$%.0f", app.getPay()) : "—");
-        locationLabel.setText(app.getLocation() != null && !app.getLocation().isBlank()
-                ? app.getLocation() : "—");
+
+        companyField.setText(app.getCompanyName());
+        roleField.setText(app.getRoleTitle());
+        payField.setText(app.getPay() > 0 ? String.format("%.0f", app.getPay()) : "");
+        locationField.setText(app.getLocation() != null ? app.getLocation() : "");
         dateAppliedLabel.setText(app.getDateApplied().toString());
 
         statusChoice.getItems().setAll(ApplicationStatus.values());
@@ -93,6 +95,32 @@ public class EditApplicationController {
     private void handleSave() {
         feedbackLabel.setText("");
         boolean hasChanged = false;
+
+        String newCompany = companyField.getText().trim();
+        String newRole = roleField.getText().trim();
+        String newLocation = locationField.getText().trim();
+        double newPay = parsePay();
+        if (newPay < 0) {
+            return;
+        }
+
+        boolean hasDetailsChanged = !newCompany.equals(application.getCompanyName())
+                || !newRole.equals(application.getRoleTitle())
+                || Double.compare(newPay, application.getPay()) != 0
+                || !newLocation.equals(
+                        application.getLocation() != null ? application.getLocation() : "");
+
+        if (hasDetailsChanged) {
+            try {
+                appController.updateDetails(
+                        application.getId(), newCompany, newRole, newPay, newLocation);
+                hasChanged = true;
+            } catch (IllegalArgumentException e) {
+                feedbackLabel.setText(e.getMessage());
+                feedbackLabel.setStyle("-fx-text-fill: #d45b5b;");
+                return;
+            }
+        }
 
         ApplicationStatus selectedStatus = statusChoice.getValue();
         if (selectedStatus != null && selectedStatus != application.getStatus()) {
@@ -137,12 +165,40 @@ public class EditApplicationController {
 
         if (hasChanged) {
             this.application = appController.getApplicationById(application.getId());
+            pageTitleLabel.setText(
+                    application.getCompanyName() + " — " + application.getRoleTitle());
             currentStatusLabel.setText("Currently: " + application.getStatus().name());
             feedbackLabel.setText("Changes saved successfully.");
             feedbackLabel.setStyle("-fx-text-fill: #3ea87a;");
         } else {
             feedbackLabel.setText("No changes to save.");
             feedbackLabel.setStyle("-fx-text-fill: #a0a4be;");
+        }
+    }
+
+    /**
+     * Parses the pay field text into a double value.
+     * Returns -1 and sets an error message if the input is not a valid number.
+     *
+     * @return The parsed pay value, or -1 if parsing fails.
+     */
+    private double parsePay() {
+        String payText = payField.getText().trim();
+        if (payText.isEmpty()) {
+            return 0;
+        }
+        try {
+            double value = Double.parseDouble(payText);
+            if (value < 0) {
+                feedbackLabel.setText("Pay cannot be negative.");
+                feedbackLabel.setStyle("-fx-text-fill: #d45b5b;");
+                return -1;
+            }
+            return value;
+        } catch (NumberFormatException e) {
+            feedbackLabel.setText("Pay must be a valid number (e.g. 120000).");
+            feedbackLabel.setStyle("-fx-text-fill: #d45b5b;");
+            return -1;
         }
     }
 

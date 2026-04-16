@@ -21,7 +21,8 @@ public class Application {
     /**
      * Standard constructor for creating a new application.
      * Generates a new UUID and sets the application date to today.
-     * * @param companyName The name of the company applying to.
+     *
+     * @param companyName The name of the company applying to.
      * @param roleTitle The title of the position.
      * @param pay The expected or offered salary.
      * @param location The geographical location of the job.
@@ -42,7 +43,8 @@ public class Application {
 
     /**
      * Full constructor used for loading existing applications from storage.
-     * * @param id The unique identifier of the application.
+     *
+     * @param id The unique identifier of the application.
      * @param companyName The name of the company applying to.
      * @param roleTitle The title of the position.
      * @param pay The expected or offered salary.
@@ -127,6 +129,38 @@ public class Application {
      */
     public String getNotes() {
         return notes;
+    }
+
+    /**
+     * Updates the company name.
+     * @param companyName The new company name.
+     */
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    /**
+     * Updates the role title.
+     * @param roleTitle The new role title.
+     */
+    public void setRoleTitle(String roleTitle) {
+        this.roleTitle = roleTitle;
+    }
+
+    /**
+     * Updates the pay value.
+     * @param pay The new pay amount.
+     */
+    public void setPay(double pay) {
+        this.pay = pay;
+    }
+
+    /**
+     * Updates the location.
+     * @param location The new location.
+     */
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     /**

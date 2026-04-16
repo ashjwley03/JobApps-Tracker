@@ -12,6 +12,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxListCell;
+import javafx.util.StringConverter;
 import logic.Application;
 import logic.ApplicationController;
 
@@ -152,12 +153,19 @@ public class CompareController {
     private void setupListView() {
         appListView.setItems(allApps);
         appListView.setCellFactory(CheckBoxListCell.forListView(
-                app -> checkedState.getOrDefault(app.getId(), new SimpleBooleanProperty(false)),
-                new javafx.util.StringConverter<Application>() {
-                    @Override public String toString(Application a) {
-                        return a == null ? "" : a.getCompanyName() + "  —  " + a.getRoleTitle();
+                app -> checkedState.getOrDefault(
+                        app.getId(), new SimpleBooleanProperty(false)),
+                new StringConverter<Application>() {
+                    @Override
+                    public String toString(Application a) {
+                        return a == null
+                                ? "" : a.getCompanyName() + "  —  " + a.getRoleTitle();
                     }
-                    @Override public Application fromString(String s) { return null; }
+
+                    @Override
+                    public Application fromString(String s) {
+                        return null;
+                    }
                 }
         ));
 

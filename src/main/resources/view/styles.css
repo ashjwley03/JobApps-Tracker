@@ -305,6 +305,27 @@
     -fx-padding: 10 12;
 }
 
+/* ── Table Edit Button ────────────────────────────────────── */
+.table-edit-button {
+    -fx-background-color: #eeebff;
+    -fx-text-fill: #7c5cfc;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 4 14;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.table-edit-button:hover {
+    -fx-background-color: #e6e1ff;
+    -fx-text-fill: #6b4ae8;
+}
+
+.table-edit-button:pressed {
+    -fx-background-color: #d9d2ff;
+}
+
 /* ── Status Pill Badges ────────────────────────────────────── */
 .status-pill {
     -fx-background-radius: 20;

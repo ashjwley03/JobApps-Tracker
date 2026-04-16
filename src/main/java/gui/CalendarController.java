@@ -5,6 +5,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import logic.Application;
 import logic.ApplicationController;
 import logic.InterviewController;
 import logic.ReminderService;
@@ -146,8 +147,8 @@ public class CalendarController {
         // Build a lookup map from application ID to company name for interview labelling
         Map<String, String> appIdToCompany = appController.getAllApplications().stream()
                 .collect(Collectors.toMap(
-                        logic.Application::getId,
-                        logic.Application::getCompanyName,
+                        Application::getId,
+                        Application::getCompanyName,
                         (a, b) -> a));
 
         // Interviews — accessed through InterviewController to respect the logic layer

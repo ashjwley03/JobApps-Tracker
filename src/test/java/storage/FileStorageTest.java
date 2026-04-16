@@ -90,7 +90,8 @@ class FileStorageTest {
     // Helpers
     // =========================================================================
 
-    /** * Creates a minimal Application with no deadline or notes set for testing.
+    /**
+     * Creates a minimal Application with no deadline or notes set for testing.
      *
      * @param company The company name.
      * @param role    The role title.
