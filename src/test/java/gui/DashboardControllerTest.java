@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * - loadData(): stat card population and chart rendering
  * - handleSearch(): FilteredList predicate is applied on user input
  * - handleNewApplication(): onNewApplication callback is invoked
+ * - Edit button column: opens EditApplicationView on click
  * - loadData(): error dialog shown on IllegalArgumentException or IllegalStateException
  */
 class DashboardControllerTest {

@@ -78,8 +78,8 @@ class InterviewControllerTest {
     }
 
     /**
-     * Verifies that attempting to update notes for an interview ID that does not exist
-     * throws an IllegalArgumentException.
+     * Verifies that attempting to add an interview for an application ID that does
+     * not exist throws an IllegalArgumentException, enforcing referential integrity.
      */
     @Test
     void addInterview_invalidAppId_throwsException() {
