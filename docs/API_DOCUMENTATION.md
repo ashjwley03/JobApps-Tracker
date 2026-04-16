@@ -28,7 +28,7 @@ The application strictly adheres to a 3-Tier Layered Architecture to ensure sepa
 
 **Source:** `SystemArchitecture.puml`
 
-![System Architecture Diagram](SystemArchitecture.png)
+![System Architecture Diagram](System%20Architecture%20Diagram.png)
 
 ---
 
@@ -58,7 +58,7 @@ This diagram shows the main user workflow through the application, covering all 
 
 **Source:** `ActivityDiagram.puml`
 
-![Activity Diagram](ActivityDiagram.png)
+![Activity Diagram](Activity%20Diagram.png)
 
 ---
 

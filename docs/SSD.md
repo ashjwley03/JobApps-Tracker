@@ -88,7 +88,7 @@ This architecture is chosen because it separates responsibilities clearly and su
 
 **Source:** `SystemArchitecture.puml`
 
-![System Architecture Diagram](SystemArchitecture.png)
+![System Architecture Diagram](System%20Architecture%20Diagram.png)
 
 ## 2.3 GUI Layer Components
 
